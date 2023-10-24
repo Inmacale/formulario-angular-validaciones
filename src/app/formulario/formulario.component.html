@@ -1,0 +1,51 @@
+<h1>Form</h1>
+<form [formGroup]="profileForm">
+    <div class="form-group">
+        <label for="nombre">Nombre: </label>
+        <input id="nombre" type="text" class="form-control" formControlName="nombre"
+            placeholder="Por favor ingrese tu nombre" required>
+        <div [hidden]="getControlError('nombre').valid" class="alert alert-danger">
+            El nombre es obligatorio
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="DNI">DNI: </label>
+        <input id="DNI" type="text" pattern="[0-9]{8}[a-zA-Z]" class="form-control" formControlName="DNI"
+            placeholder="Por favor ingrese tu DNI: 00000000A" required>
+        <div [hidden]="getControlError('DNI').valid" class="alert alert-danger">
+            <span *ngIf="getControlError('DNI').errors?.['required']">
+                DNI obligatorio
+            </span>
+            <span *ngIf="getControlError('DNI').errors?.['pattern']">
+                El DNI debe ser valido
+            </span>
+
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="email">Email: </label>
+        <input id="email" type="text" class="form-control" formControlName="email"
+            placeholder="Por favo ingrese tu email">
+        <div [hidden]="getControlError('email').valid" class="alert alert-danger">
+            email no valido
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="fechaAlta">Fecha de alta: </label>
+        <input id="fechaAlta" type="date" class="form-control" formControlName="fechaAlta">
+    </div>
+
+
+    <div class="form-group">
+        <label for="fechaBaja">Fecha de baja: </label>
+        <input id="fechaBaja" type="date" class="form-control" formControlName="fechaBaja">
+    </div>
+
+</form>
+
+<button [disabled]="profileForm.invalid">Submit</button>
+
+{{getControlError('DNI').errors | json }}
