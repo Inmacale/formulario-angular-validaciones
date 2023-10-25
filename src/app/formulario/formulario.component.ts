@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ValidationErrors } from '@angular/forms';
 import { Validators, FormControl } from '@angular/forms';
+import { AbstractControl, ValidatorFn } from '@angular/forms';
 
 
 @Component({
@@ -18,6 +19,34 @@ export class FormularioComponent {
     this.createForm();
   }
 
+  private createForm(): void {
+    this.profileForm = this.formBuilder.group({
+      nombre: new FormControl('', [Validators.required]),
+      DNI: new FormControl('', [Validators.required, Validators.pattern('[0-9]{8}[a-zA-Z]')]),
+      email: new FormControl('', [Validators.email]),
+      fechaAlta: new FormControl(['']),
+      fechaBaja: new FormControl('', [Validators.required])
+    }, {
+      validators: this.fechaBajaValida()
+    });
+  }
+
+  private fechaBajaValida(): ValidatorFn {
+    return (): ValidationErrors | null => {
+      const fechaA = this.profileForm.get('fechaAlta')?.value;
+      const fechaB = this.profileForm.get('fechaBaja')?.value;
+      console.log(fechaA, fechaB)
+
+      if (fechaB && fechaA && fechaB < fechaA) {
+        this.profileForm.get('fechaBaja')?.setErrors({ fechaBajaNoValida: true });
+        return { fechaBajaNoValida: true };
+      } else {
+        this.profileForm.get('fechaBaja')?.setErrors(null);
+        return null;
+      }
+    };
+  }
+
   public getControlError(key: string): { valid: boolean, errors: ValidationErrors[] | any } {
     const formC = this.profileForm.get(key);
     const validation = {
@@ -26,17 +55,6 @@ export class FormularioComponent {
     }
     return validation;
   }
-
-  private createForm(): void {
-    this.profileForm = this.formBuilder.group({
-      nombre: new FormControl('', [Validators.required]),
-      DNI: new FormControl('', [Validators.required, Validators.pattern('[0-9]{8}[a-zA-Z]')]),
-      email: new FormControl('', [Validators.email]),
-      fechaAlta: new FormControl(['']),
-      fechaBaja: new FormControl([''])
-    });
-  }
-
 
 
 }
