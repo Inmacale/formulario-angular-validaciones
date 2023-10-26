@@ -42,11 +42,12 @@
     <div class="form-group">
         <label for="fechaBaja">Fecha de baja: </label>
         <input id="fechaBaja" type="date" class="form-control" formControlName="fechaBaja">
-        <div [hidden]="getControlError('fechaBaja').valid" class="alert alert-danger">
+        <div [hidden]="getControlError('fechaBaja').valid && profileForm.errors?.['fechaBajaNoValida']"
+            class="alert alert-danger">
             <span *ngIf="getControlError('fechaBaja').errors?.['required']">
                 Fecha baja obligatorio
             </span>
-            <span *ngIf="getControlError('fechaBaja').errors?.['fechaBajaNoValida']">
+            <span *ngIf="profileForm.errors?.['fechaBajaNoValida']">
                 La fecha de baja no puede ser menor a la fecha de alta
             </span>
         </div>
@@ -54,4 +55,4 @@
 
 </form>
 
-<button [disabled]="profileForm.invalid || getControlError('fechaBaja').errors?.['fechaBajaNoValida']">Submit</button>
+{{profileForm.errors | json}}

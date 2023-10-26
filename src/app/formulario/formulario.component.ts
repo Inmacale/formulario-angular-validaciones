@@ -1,7 +1,10 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ValidationErrors } from '@angular/forms';
 import { Validators, FormControl } from '@angular/forms';
-import { AbstractControl, ValidatorFn } from '@angular/forms';
+import { ValidatorFn } from '@angular/forms';
+
+import { debounceTime } from 'rxjs/operators';
+
 
 
 @Component({
@@ -17,7 +20,11 @@ export class FormularioComponent {
     private formBuilder: FormBuilder
   ) {
     this.createForm();
+
+
   }
+
+
 
   private createForm(): void {
     this.profileForm = this.formBuilder.group({
@@ -29,22 +36,39 @@ export class FormularioComponent {
     }, {
       validators: this.fechaBajaValida()
     });
+
+    this.profileForm.valueChanges.pipe(debounceTime(1000)).subscribe(() => {
+      //verificar si el formulario es valido
+      console.log('errors', this.profileForm.errors)
+
+      if (this.profileForm.valid) {
+        //realizar el submit del formulario
+        this.submit();
+      }
+
+    });
   }
+
+
 
   private fechaBajaValida(): ValidatorFn {
     return (): ValidationErrors | null => {
       const fechaA = this.profileForm.get('fechaAlta')?.value;
       const fechaB = this.profileForm.get('fechaBaja')?.value;
-      console.log(fechaA, fechaB)
+      console.log(fechaA, fechaB);
+
 
       if (fechaB && fechaA && fechaB < fechaA) {
-        this.profileForm.get('fechaBaja')?.setErrors({ fechaBajaNoValida: true });
         return { fechaBajaNoValida: true };
       } else {
-        this.profileForm.get('fechaBaja')?.setErrors(null);
         return null;
       }
     };
+  }
+
+  public submit() {
+    console.log('Submit', this.profileForm.value);
+
   }
 
   public getControlError(key: string): { valid: boolean, errors: ValidationErrors[] | any } {
